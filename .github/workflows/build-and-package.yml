@@ -12,6 +12,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         arch: [x64, arm64] # Supports both x64 and ARM64 architectures
+      exclude:
+        - os: windows-latest
+          arch: arm64
 
     steps:
       - name: Checkout code
@@ -28,9 +31,7 @@ jobs:
       - name: Build executable
         run: |
           if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            if [[ "${{ matrix.arch }}" == "x64" ]]; then
-              bun run build:win
-            fi
+            bun run build:win
           elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
             if [[ "${{ matrix.arch }}" == "x64" ]]; then
               bun run build:mac
@@ -46,7 +47,18 @@ jobs:
           fi
         shell: bash
 
-      - name: Prepare package
+      - name: Prepare package (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir package
+          Copy-Item -Path 'drizzle' -Destination 'package\drizzle' -Recurse
+          Copy-Item -Path 'public' -Destination 'package\public' -Recurse
+          mkdir package\bin
+          Copy-Item -Path 'bin\sidewinder.exe' -Destination 'package\bin\sidewinder.exe'
+        shell: pwsh
+
+      - name: Prepare package (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
           mkdir package
           cp -r drizzle public bin/sidewinder package/
@@ -66,18 +78,13 @@ jobs:
           tar -czvf sidewinder-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz -C package .
         shell: bash
 
-      - name: Upload Package (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v3
+      - name: Upload Release Assets
+        uses: ncipollo/release-action@v1
         with:
-          name: sidewinder-${{ github.ref_name }}-windows-${{ matrix.arch }}
-          path: |
+          artifacts: |
             sidewinder-${{ github.ref_name }}-windows-${{ matrix.arch }}.zip
-
-      - name: Upload Package (Linux/macOS)
-        if: runner.os != 'Windows'
-        uses: actions/upload-artifact@v3
-        with:
-          name: sidewinder-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}
-          path: |
             sidewinder-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          tag: ${{ github.ref_name }}
+          allowUpdates: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
