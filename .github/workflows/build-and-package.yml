@@ -44,25 +44,40 @@ jobs:
               bun run build:linux-arm
             fi
           fi
+        shell: bash
 
       - name: Prepare package
         run: |
           mkdir package
           cp -r drizzle public bin/sidewinder package/
+        shell: bash
 
-      - name: Compress Package
+      - name: Compress Package (Windows)
+        if: runner.os == 'Windows'
         run: |
-          VERSION="${GITHUB_REF#refs/tags/}"
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            Compress-Archive -Path package/* -DestinationPath sidewinder-${VERSION}-windows-${{ matrix.arch }}.zip
-          else
-            tar -czvf sidewinder-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz -C package .
+          $VERSION = $env:GITHUB_REF -replace 'refs/tags/', ''
+          Compress-Archive -Path 'package/*' -DestinationPath "sidewinder-$VERSION-windows-${{ matrix.arch }}.zip"
         shell: pwsh
 
-      - name: Upload Package
+      - name: Compress Package (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          tar -czvf sidewinder-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz -C package .
+        shell: bash
+
+      - name: Upload Package (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v3
+        with:
+          name: sidewinder-${{ github.ref_name }}-windows-${{ matrix.arch }}
+          path: |
+            sidewinder-${{ github.ref_name }}-windows-${{ matrix.arch }}.zip
+
+      - name: Upload Package (Linux/macOS)
+        if: runner.os != 'Windows'
         uses: actions/upload-artifact@v3
         with:
           name: sidewinder-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}
           path: |
-            sidewinder-${{ github.ref_name }}-windows-${{ matrix.arch }}.zip
             sidewinder-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
