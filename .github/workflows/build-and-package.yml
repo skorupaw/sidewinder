@@ -1,9 +1,8 @@
 name: Build and Package
 
 on:
-  push:
-    tags:
-      - "v*" # Runs only on version tags like v1.0, v1.0.0, etc.
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -11,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        arch: [x64, arm64] # Supports both x64 and ARM64 architectures
+        arch: [x64, arm64]
       exclude:
         - os: windows-latest
           arch: arm64
@@ -19,6 +18,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v1
@@ -67,24 +68,27 @@ jobs:
       - name: Compress Package (Windows)
         if: runner.os == 'Windows'
         run: |
-          $VERSION = $env:GITHUB_REF -replace 'refs/tags/', ''
+          $VERSION = '${{ github.event.release.tag_name }}'
           Compress-Archive -Path 'package/*' -DestinationPath "sidewinder-$VERSION-windows-${{ matrix.arch }}.zip"
         shell: pwsh
 
       - name: Compress Package (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
-          VERSION="${GITHUB_REF#refs/tags/}"
+          VERSION="${{ github.event.release.tag_name }}"
           tar -czvf sidewinder-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz -C package .
         shell: bash
 
       - name: Upload Release Assets
-        uses: ncipollo/release-action@v1
+        uses: actions/upload-release-asset@v1
         with:
-          artifacts: |
-            sidewinder-${{ github.ref_name }}-windows-${{ matrix.arch }}.zip
-            sidewinder-${{ github.ref_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
-          tag: ${{ github.ref_name }}
-          allowUpdates: true
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: |
+            sidewinder-${{ github.event.release.tag_name }}-windows-${{ matrix.arch }}.zip
+            sidewinder-${{ github.event.release.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          asset_name: |
+            sidewinder-${{ github.event.release.tag_name }}-windows-${{ matrix.arch }}.zip
+            sidewinder-${{ github.event.release.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
