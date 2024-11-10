@@ -79,16 +79,24 @@ jobs:
           tar -czvf sidewinder-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz -C package .
         shell: bash
 
-      - name: Upload Release Assets
+      - name: Upload Release Asset (Windows)
+        if: runner.os == 'Windows'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: |
-            sidewinder-${{ github.event.release.tag_name }}-windows-${{ matrix.arch }}.zip
-            sidewinder-${{ github.event.release.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
-          asset_name: |
-            sidewinder-${{ github.event.release.tag_name }}-windows-${{ matrix.arch }}.zip
-            sidewinder-${{ github.event.release.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          asset_path: sidewinder-${{ github.event.release.tag_name }}-windows-${{ matrix.arch }}.zip
+          asset_name: sidewinder-${{ github.event.release.tag_name }}-windows-${{ matrix.arch }}.zip
           asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Asset (Linux/macOS)
+        if: runner.os != 'Windows'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: sidewinder-${{ github.event.release.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          asset_name: sidewinder-${{ github.event.release.tag_name }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+          asset_content_type: application/gzip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
