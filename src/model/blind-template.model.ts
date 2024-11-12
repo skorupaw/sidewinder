@@ -1,5 +1,5 @@
 import { Static, Type as T } from "@sinclair/typebox";
-import { TemplateSchema } from "@/model";
+import { TemplateSchema } from "./template.model";
 
 export const BlindTemplateSchema = T.Object(
   {

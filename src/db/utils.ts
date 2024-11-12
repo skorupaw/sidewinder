@@ -1,18 +1,24 @@
-import { platform, homedir } from 'os';
-import path from 'path';
-import fs from 'fs';
-import { name } from '../../package.json'
+import { platform, homedir } from "os";
+import path from "path";
+import fs from "fs";
+import { name } from "../../package.json";
 
 export const databasePath = () => {
   const homeDir = homedir();
   let dbPath;
 
-  if (platform() === 'win32') {
-    dbPath = path.join(homeDir, 'AppData', 'Roaming', name, `${name}.sqlite`);
-  } else if (platform() === 'darwin') {
-    dbPath = path.join(homeDir, 'Library', 'Application Support', name, `${name}.sqlite`);
+  if (platform() === "win32") {
+    dbPath = path.join(homeDir, "AppData", "Roaming", name, `${name}.sqlite`);
+  } else if (platform() === "darwin") {
+    dbPath = path.join(
+      homeDir,
+      "Library",
+      "Application Support",
+      name,
+      `${name}.sqlite`,
+    );
   } else {
-    dbPath = path.join(homeDir, '.local', 'share', name, `${name}.sqlite`);
+    dbPath = path.join(homeDir, ".local", "share", name, `${name}.sqlite`);
   }
 
   // Ensure the directory exists
@@ -22,6 +28,6 @@ export const databasePath = () => {
   }
 
   return dbPath;
-}
+};
 
-export default databasePath
+export default databasePath;

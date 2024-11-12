@@ -13,7 +13,7 @@ const Segment: FC<{
   segment: Model.Segment;
 }> = ({ segment: { title, subtitle, text, list, tags } }) => {
   return (
-    <div className="flex flex-col gap-6">
+    <section className="flex flex-col gap-6">
       {title && (
         <div className="flex flex-col">
           <h3 className="italic leading-4 text-black">{title}</h3>
@@ -36,7 +36,7 @@ const Segment: FC<{
       {tags && (
         <p className="text-sm italic leading-6 text-gray">{tags.join(" • ")}</p>
       )}
-    </div>
+    </section>
   );
 };
 
@@ -108,7 +108,7 @@ const Template: FC<{ data: Model.Template }> = ({
 }) => {
   return (
     <>
-      <div className="grid h-dvh grid-cols-10">
+      <div className="relative grid grid-cols-10">
         <div className="col-span-3 bg-black">
           <Sidebar data={{ name, languages, position, skills }} />
         </div>
@@ -119,6 +119,7 @@ const Template: FC<{ data: Model.Template }> = ({
             ))}
           </div>
         </div>
+        <div className="absolute bottom-8 right-8 h-44 w-44 bg-[url('../public/images/cube.png')] bg-contain bg-no-repeat opacity-5" />
       </div>
     </>
   );
@@ -141,7 +142,7 @@ const Root: FC<{ data: Model.Template }> = ({ data }) => {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="/public/styles.css" rel="stylesheet" />
-        <title>Template V1</title>
+        <title>Template</title>
       </head>
       <body>
         <Template data={data} />

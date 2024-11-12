@@ -1,9 +1,10 @@
 import { TemplateSchema } from "@/model";
-import { generateBlind } from "@/use-cases/generate-blind";
 import { tbValidator } from "@hono/typebox-validator";
 import { Hono } from "hono";
 import { Type as T } from "@sinclair/typebox";
-import { getBlindById } from "@/repositories/blind.respository";
+import { createBlind, getBlindById } from "@/repositories/blind.respository";
+import { generatePDF } from "@/use-cases";
+import { createBlindTemplate } from "@/repositories/blind-template.repository";
 
 const blind = new Hono();
 
@@ -27,11 +28,16 @@ blind.get(
 );
 
 blind.post("/", tbValidator("json", TemplateSchema), async (c) => {
-  const template = c.req.valid("json");
-  const blind = await generateBlind(template);
+  const template = await c.req.valid("json");
+  const blindSchema = await createBlindTemplate({ template });
+  const port = new URL(c.req.url).port;
+  const file = await generatePDF({
+    url: `http://localhost:${port}/blind-schema/${blindSchema.id}/template`,
+  });
+  const blind = await createBlind({ blindTemplateId: blindSchema.id, file });
   return c.json({
     ...blind,
-    file: `http://localhost:3000/${blind.id}/file`,
+    file: `http://localhost:${port}/blind/${blind.id}/file`,
   });
 });
 
