@@ -22,7 +22,8 @@ const Segment: FC<{
           )}
         </div>
       )}
-      {list && (
+      {text && <p className="text-sm leading-6 text-black">{text}</p>}
+      {list && list.length > 0 && (
         <ul className="flex flex-col gap-2">
           {list.map((item) => (
             <li className="flex items-start gap-x-3 text-sm leading-6 text-black">
@@ -32,8 +33,7 @@ const Segment: FC<{
           ))}
         </ul>
       )}
-      {text && <p className="text-sm leading-6 text-black">{text}</p>}
-      {tags && (
+      {tags && tags.length > 0 && (
         <p className="text-sm italic leading-6 text-gray">{tags.join(" • ")}</p>
       )}
     </section>
@@ -84,7 +84,7 @@ const Sidebar: FC<{ data: Omit<Model.Template, "sections"> }> = ({
 }) => {
   return (
     <aside className="flex h-full w-full flex-col justify-between">
-      <div className="flex h-64 w-full flex-col items-center justify-center bg-[url('../public/images/logo-backdrop.svg')] bg-cover bg-no-repeat">
+      <div className="flex h-64 w-full flex-shrink-0 flex-grow-0 flex-col items-center justify-center bg-[url('../public/images/logo-backdrop.svg')] bg-cover bg-no-repeat">
         <div className="flex flex-col items-start">
           <h1 className="relative z-10 inline-block text-6xl font-extrabold italic text-white after:absolute after:bottom-[6px] after:left-0 after:z-[-1] after:inline-block after:h-[6px] after:w-full after:bg-gradient-to-t after:from-primary after:to-secondary after:content-['']">
             {name}
@@ -92,11 +92,11 @@ const Sidebar: FC<{ data: Omit<Model.Template, "sections"> }> = ({
           <p className="leading-tight text-white">{position}</p>
         </div>
       </div>
-      <div className="flex flex-col gap-12 px-10 py-12">
+      <div className="flex h-full flex-col gap-12 px-10 py-12">
         <Languages languages={languages} />
         <Skills skills={skills} />
       </div>
-      <div className="flex h-[576px] w-full flex-col items-center justify-end bg-[url('../public/images/block-backdrop.svg')] bg-cover bg-no-repeat px-16 py-6">
+      <div className="flex h-[576px] w-full flex-shrink-0 flex-grow-0 flex-col items-center justify-end bg-[url('../public/images/block-backdrop.svg')] bg-cover bg-no-repeat px-16 py-6">
         <div className="h-10 w-full bg-[url('../public/images/logo.svg')] bg-contain bg-no-repeat" />
       </div>
     </aside>
@@ -108,7 +108,7 @@ const Template: FC<{ data: Model.Template }> = ({
 }) => {
   return (
     <>
-      <div className="relative grid grid-cols-10">
+      <div className="relative grid min-h-[1684px] grid-cols-10">
         <div className="col-span-3 bg-black">
           <Sidebar data={{ name, languages, position, skills }} />
         </div>
@@ -144,7 +144,7 @@ const Root: FC<{ data: Model.Template }> = ({ data }) => {
         <link href="/public/styles.css" rel="stylesheet" />
         <title>Template</title>
       </head>
-      <body>
+      <body className="h-full">
         <Template data={data} />
       </body>
     </html>
