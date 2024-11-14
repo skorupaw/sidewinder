@@ -6,13 +6,17 @@ export const generatePDF = async ({ url }: { url: string }) => {
 
   await page.goto(url, { waitUntil: "networkidle2" });
 
-  const height = await page.evaluate(() => document.body.scrollHeight);
+  // [TODO] @skorupaw
+  // It seems something unexpected is happening here. For some reason, `puppeteer`
+  // adds extra height to the template.
+  // const height = await page.evaluate(() => document.body.scrollHeight);
   const minHeight = 1684;
 
   const file = await page.pdf({
     printBackground: true,
     width: "1190px",
-    height: height > minHeight ? `${height}px` : `${minHeight}px`,
+    // height: height > minHeight ? `${height}px` : `${minHeight}px`,
+    height: minHeight,
     landscape: false,
     margin: {
       top: "0px",
