@@ -14,10 +14,14 @@ app
 
 const args = Bun.argv;
 const portIndex = args.indexOf("--port");
+
+// Check for "--port" argument, `process.env.PORT`, or default to 55015
 const port =
   portIndex !== -1 && args[portIndex + 1]
     ? parseInt(args[portIndex + 1])
-    : 55015;
+    : process.env.PORT
+      ? parseInt(process.env.PORT)
+      : 55015;
 
 console.log(`Started server http://localhost:${port}`);
 

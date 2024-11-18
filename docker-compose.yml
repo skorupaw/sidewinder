@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-55015}:${PORT:-55015}"
+    volumes:
+      - app-db:/app/db
+    environment:
+      NODE_ENV: production
+      DATABASE_PATH: /app/db/sidewinder.sqlite
+      PORT: 55015 # You can override this with an environment variable
+
+volumes:
+  app-db:
+    driver: local

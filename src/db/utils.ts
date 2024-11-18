@@ -7,7 +7,9 @@ export const databasePath = () => {
   const homeDir = homedir();
   let dbPath;
 
-  if (platform() === "win32") {
+  if (process.env.DATABASE_PATH) {
+    dbPath = process.env.DATABASE_PATH;
+  } else if (platform() === "win32") {
     dbPath = path.join(homeDir, "AppData", "Roaming", name, `${name}.sqlite`);
   } else if (platform() === "darwin") {
     dbPath = path.join(
