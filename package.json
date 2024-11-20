@@ -18,7 +18,7 @@
     "@sinclair/typebox": "^0.33.17",
     "drizzle-orm": "^0.36.0",
     "hono": "^4.6.8",
-    "puppeteer": "^23.6.1"
+    "puppeteer": "^23.8.0"
   },
   "devDependencies": {
     "@types/bun": "^1.1.12",
