@@ -27,7 +27,7 @@ export const TemplateSchema = T.Object(
   {
     name: T.String(),
     position: T.String(),
-    languages: T.Array(T.String()),
+    languages: T.Optional(T.Array(T.String())),
     skills: T.Array(T.String()),
     sections: T.Array(SectionSchema),
   },

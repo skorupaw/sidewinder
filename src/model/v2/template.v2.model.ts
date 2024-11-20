@@ -24,11 +24,11 @@ export const TemplateV2Schema = T.Object(
     version: T.Literal("2"),
     name: T.String(),
     position: T.String(),
-    languages: T.Array(T.String()),
+    languages: T.Optional(T.Array(T.String())),
     skills: T.Array(T.String()),
     summary: T.String(),
     experience: T.Array(ExperienceSchema),
-    education: T.Array(EducationSchema),
+    education: T.Optional(T.Array(EducationSchema)),
     certificates: T.Optional(T.Array(CertificatesSchema)),
   },
   { additionalProperties: false },
@@ -70,13 +70,15 @@ export const toBase = ({
     })),
   });
 
-  template.sections.push({
-    title: "Education",
-    segments: education.map((ed) => ({
-      title: ed.school,
-      subtitle: ed.degree,
-    })),
-  });
+  if (education && education.length > 0) {
+    template.sections.push({
+      title: "Education",
+      segments: education.map((ed) => ({
+        title: ed.school,
+        subtitle: ed.degree,
+      })),
+    });
+  }
 
   if (certificates && certificates.length > 0) {
     template.sections.push({

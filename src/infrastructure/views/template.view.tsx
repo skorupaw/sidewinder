@@ -93,7 +93,9 @@ const Sidebar: FC<{ data: Omit<Model.Template, "sections"> }> = ({
         </div>
       </div>
       <div className="flex h-full flex-col gap-12 px-10 py-12">
-        <Languages languages={languages} />
+        {languages && languages.length > 0 && (
+          <Languages languages={languages} />
+        )}
         <Skills skills={skills} />
       </div>
       <div className="flex h-[576px] w-full flex-shrink-0 flex-grow-0 flex-col items-center justify-end bg-[url('../public/images/block-backdrop.svg')] bg-cover bg-no-repeat px-16 py-6">
