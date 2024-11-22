@@ -58,6 +58,7 @@ jobs:
           Copy-Item -Path '.cache' -Destination 'package\.cache' -Recurse
           Copy-Item -Path 'drizzle' -Destination 'package\drizzle' -Recurse
           Copy-Item -Path 'public' -Destination 'package\public' -Recurse
+          Copy-Item -Path '.puppeteerrc.cjs' -Destination 'package\.puppeteerrc.cjs'
           Copy-Item -Path 'bin\sidewinder.exe' -Destination 'package\sidewinder.exe'
         shell: pwsh
 
@@ -65,7 +66,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir package
-          cp -r drizzle public .cache bin/sidewinder package/
+          cp -r drizzle public .cache .puppeteerrc.cjs bin/sidewinder package/
         shell: bash
 
       - name: Compress Package (Windows)
