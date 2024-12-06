@@ -27,6 +27,17 @@ blind.get(
   },
 );
 
+blind.post("/html", tbValidator("json", TemplateV2Schema), async (c) => {
+  const template = await c.req.valid("json");
+  const blindSchema = await createBlindTemplate({ template: toBase(template) });
+  const port = new URL(c.req.url).port;
+  const baseUrl = `http://localhost:${port}/v2`;
+  const html = await fetch(
+    `${baseUrl}/blind-schema/${blindSchema.id}/template`,
+  );
+  return c.html(await html.text());
+});
+
 blind.post("/", tbValidator("json", TemplateV2Schema), async (c) => {
   const template = await c.req.valid("json");
   const blindSchema = await createBlindTemplate({ template: toBase(template) });
