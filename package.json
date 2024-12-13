@@ -4,32 +4,36 @@
   "version": "0.1.0-beta",
   "scripts": {
     "build:css": "postcss src/infrastructure/views/styles.css -o public/styles.css",
-    "build:win": "bun build --compile ./src/index.ts --target=bun-windows-x64 --outfile ./bin/sidewinder",
+    "build:win": "pkg build --compile ./src/index.ts --target=node18-win --outfile ./bin/sidewinder",
     "build:linux": "bun build --compile ./src/index.ts --target=bun-linux-x64 --outfile ./bin/sidewinder",
     "build:linux-arm": "bun build --compile ./src/index.ts --target=bun-linux-arm64 --outfile ./bin/sidewinder",
     "build:mac": "bun build --compile --target=bun-darwin-x64 ./src/index.ts --outfile ./bin/sidewinder",
     "build:mac-arm": "bun build --compile --target=bun-darwin-arm64 ./src/index.ts --outfile ./bin/sidewinder",
-    "dev": "bun run --hot src/index.ts",
-    "db:generate": "bunx drizzle-kit generate"
+    "dev": "tsx src/index.ts",
+    "db:generate": "pnpm dlx drizzle-kit generate"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.3",
     "@hono/typebox-validator": "^0.2.5",
     "@sinclair/typebox": "^0.33.17",
+    "better-sqlite3": "^11.7.0",
     "drizzle-orm": "^0.36.0",
     "hono": "^4.6.8",
+    "pkg": "^5.8.1",
     "puppeteer": "^23.8.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.12",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "latest",
+    "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.27.0",
     "eslint": "^9.14.0",
     "postcss": "^8.4.47",
-    "autoprefixer": "^10.4.20",
     "postcss-cli": "^11.0.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   },
   "repository": {
@@ -46,5 +50,6 @@
     "css",
     "web-development"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "pnpm@9.6.0+sha1.65cd48c20dd329b7f455088b6dd17d4d5b6d02e3"
 }

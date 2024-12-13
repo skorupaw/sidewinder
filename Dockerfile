@@ -1,30 +1,26 @@
-# Use the official Bun image
-FROM oven/bun:slim
+# Use the official Puppeteer image
+FROM ghcr.io/puppeteer/puppeteer:latest
+
+# Switch to root user to avoid permission issues
+USER root
+
+# Enable corepack 
+RUN npm install -g corepack
 
 # Set the working directory
 WORKDIR /app
 
-# Install Puppeteer dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgtk-3-dev \
-    libnotify-dev \
-    libgconf-2-4 \
-    libnss3 \
-    libxss1 \
-    libasound2 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Copy only necessary files for dependency installation
+COPY package.json .puppeteerrc.cjs pnpm-lock.yaml ./
 
-# Set Puppeteer to use bundled Chromium
-ENV PUPPETEER_SKIP_DOWNLOAD=false
-
-# Copy package.json and bun.lockb to install dependencies
-COPY package.json bun.lockb .puppeteerrc.cjs ./
-
-# Install dependencies using Bun
-RUN bun install
+# Install dependencies using pnpm
+RUN corepack enable pnpm && \
+    pnpm config set store-dir /pnpm-store && \
+    pnpm install --frozen-lockfile
 
 # Copy the rest of the application code
-COPY . .
+# Use .dockerignore to prevent node_modules and other unnecessary files from being copied
+COPY . ./
 
 # Expose the application's port
 EXPOSE 55015
@@ -33,8 +29,8 @@ EXPOSE 55015
 ENV DATABASE_PATH=/app/db
 ENV PORT=55015
 
-# Create the database directory
-RUN mkdir -p /app/db
+# Set correct permissions
+RUN chown -R node:node /app
 
 # Start the application
-CMD ["bun", "run", "dev"]
+CMD ["pnpm", "run", "dev"]

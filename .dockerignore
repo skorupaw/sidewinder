@@ -1,0 +1,31 @@
+# Dependency directories
+node_modules/
+**/node_modules/
+npm-debug.log
+pnpm-debug.log
+pnpm-store/
+
+# Version control
+.git/
+.gitignore
+
+# Environment files
+.env
+*.env
+
+# Build and local directories
+dist/
+build/
+.next/
+.nuxt/
+.svelte-kit/
+.vite/
+.cache/
+
+# Misc
+.DS_Store
+*.pem
+*.log
+*.swp
+.vscode/
+.idea/
